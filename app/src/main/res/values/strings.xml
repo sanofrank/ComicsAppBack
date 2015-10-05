@@ -4,6 +4,11 @@
     <string name="aggiungi">Aggiungi Prodotto</string>
     <string name="visualizza">Visualizza DataBase</string>
     <string name="title_activity_aggiungi">Aggiungi</string>
+    <string name="TextView">oppure</string>
+    <string name="manuale">Aggiungi Manualmente</string>
+    <string name="scansione">Scansiona Codice</string>
+    <string name="title_activity_simple_scanner">SimpleScannerActivity</string>
 
     <string name="hello_world">Hello world!</string>
+
 </resources>
