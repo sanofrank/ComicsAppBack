@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">ComicsAppBack</string>
+    <string name="action_settings">Settings</string>
+    <string name="aggiungi">Aggiungi Prodotto</string>
+    <string name="visualizza">Visualizza DataBase</string>
+    <string name="title_activity_aggiungi">Aggiungi</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
 </resources>
