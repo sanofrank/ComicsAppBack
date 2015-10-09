@@ -8,12 +8,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.firebase.client.Firebase;
+
 public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Firebase da aggiungere sull'activity con il DB
+        Firebase.setAndroidContext(this);
         Button btn = (Button) findViewById(R.id.aggiungi);
         btn.setOnClickListener(new View.OnClickListener() {
         @Override
