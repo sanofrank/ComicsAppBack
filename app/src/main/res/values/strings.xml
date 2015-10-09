@@ -7,8 +7,12 @@
     <string name="TextView">oppure</string>
     <string name="manuale">Aggiungi Manualmente</string>
     <string name="scansione">Scansiona Codice</string>
-    <string name="title_activity_simple_scanner">SimpleScannerActivity</string>
+    <string name="title_activity_form">FormActivity</string>
+    <string name="form_intro">Inserisci i dati del prodotto</string>
+    <string name="titolo">Titolo:</string>
+    <string name="autore">Autore</string>
+    <string name="invia">Invia</string>
 
-    <string name="hello_world">Hello world!</string>
+
 
 </resources>
