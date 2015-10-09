@@ -15,7 +15,6 @@
         />
 
     <TextView
-
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/titolo"
@@ -40,6 +39,77 @@
         android:text=""
         />
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/disegnatore"
+        />
+    <EditText
+        android:id="@+id/edit_disegnatore"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/casa_ed"
+        />
+    <EditText
+        android:id="@+id/edit_casa_ed"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/anno"
+        />
+    <EditText
+        android:id="@+id/edit_anno"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/genere"
+        />
+    <EditText
+        android:id="@+id/edit_genere"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/prezzo"
+        />
+    <EditText
+        android:id="@+id/edit_prezzo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quantita"
+        />
+    <EditText
+        android:id="@+id/edit_quantita"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        />
     <Button
         android:id="@+id/form_button"
         android:layout_height="wrap_content"

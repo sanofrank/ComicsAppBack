@@ -1,17 +1,26 @@
 <resources>
+    <!--Main-->
     <string name="app_name">ComicsAppBack</string>
     <string name="action_settings">Settings</string>
     <string name="aggiungi">Aggiungi Prodotto</string>
     <string name="visualizza">Visualizza DataBase</string>
+    <!--Aggiungi-->
     <string name="title_activity_aggiungi">Aggiungi</string>
     <string name="TextView">oppure</string>
     <string name="manuale">Aggiungi Manualmente</string>
     <string name="scansione">Scansiona Codice</string>
+    <!--FormActivity-->
     <string name="title_activity_form">FormActivity</string>
     <string name="form_intro">Inserisci i dati del prodotto</string>
     <string name="titolo">Titolo:</string>
     <string name="autore">Autore</string>
     <string name="invia">Invia</string>
+    <string name="disegnatore">Disegnatore</string>
+    <string name="casa_ed">Casa Editrice</string>
+    <string name="anno">Anno</string>
+    <string name="genere">Genere</string>
+    <string name="prezzo">Prezzo</string>
+    <string name="quantita">Quantità</string>
 
 
 
