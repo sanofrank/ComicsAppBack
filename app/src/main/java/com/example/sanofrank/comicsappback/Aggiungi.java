@@ -1,30 +1,23 @@
 package com.example.sanofrank.comicsappback;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.zxing.integration.android.IntentIntegrator;
 
-public class Aggiungi extends ActionBarActivity {
+
+public class Aggiungi extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aggiungi);
-        getSupportActionBar().hide();
 
-        Button btn = (Button) findViewById(R.id.aggiungi);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent add = new Intent(Aggiungi.this, SimpleScannerActivity.class);
-                startActivity(add);
-            }
-        });
     }
 
     @Override
@@ -48,4 +41,11 @@ public class Aggiungi extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    public void onScansiona(View view) {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.initiateScan();
+    }
+
 }

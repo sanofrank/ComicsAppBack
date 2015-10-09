@@ -23,7 +23,8 @@
         android:id="@+id/scansiona"
         android:layout_marginTop="36dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="onScansiona"/>
 
     <TextView
         android:id="@+id/scan_format"
