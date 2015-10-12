@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 
 public class FormActivity extends Activity {
@@ -12,6 +13,11 @@ public class FormActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
+        String barcode = getIntent().getExtras().getString("barcode");
+        EditText editText = (EditText) findViewById(R.id.edit_barcode);
+        editText.setText(barcode);
+
+
     }
 
     @Override

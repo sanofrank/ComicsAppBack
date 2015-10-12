@@ -22,10 +22,22 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:text="@string/cod"
+            />
+        <EditText
+            android:id="@+id/edit_barcode"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:text="@string/titolo"
             />
         <EditText
-            android:id="@+id/edit_name"
+            android:id="@+id/edit_codice"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text=""
@@ -111,6 +123,17 @@
             />
         <EditText
             android:id="@+id/edit_quantita"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/descr"
+            />
+        <EditText
+            android:id="@+id/descr"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text=""

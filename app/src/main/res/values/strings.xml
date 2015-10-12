@@ -13,6 +13,7 @@
     <string name="title_activity_form">FormActivity</string>
     <string name="form_intro">Inserisci i dati del prodotto</string>
     <string name="titolo">Titolo:</string>
+    <string name="cod">Codice a Barre:</string>
     <string name="autore">Autore</string>
     <string name="invia">Invia</string>
     <string name="disegnatore">Disegnatore</string>
@@ -21,6 +22,7 @@
     <string name="genere">Genere</string>
     <string name="prezzo">Prezzo</string>
     <string name="quantita">Quantità</string>
+    <string name="descr">Descrizione</string>
 
 
 
