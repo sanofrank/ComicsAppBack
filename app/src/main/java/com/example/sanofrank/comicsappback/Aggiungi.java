@@ -36,14 +36,15 @@ public class Aggiungi extends Activity {
                 startActivity(add);
             }
         });
-        if (savedInstanceState != null){
-            barcode = savedInstanceState.getString("barcode");
-            Intent ag = new Intent(Aggiungi.this, FormActivity.class);
-            ag.putExtra("barcode", barcode);
-            startActivity(ag);
 
-        }
         //Toast.makeText(this, barcode , Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+
     }
 
     @Override
@@ -86,6 +87,12 @@ public class Aggiungi extends Activity {
                 //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
 
                 barcode = result.getContents();
+                if (barcode != null){
+                    Intent ag = new Intent(Aggiungi.this, FormActivity.class);
+                    ag.putExtra("barcode", barcode);
+                    startActivity(ag);
+
+                }
 
             }
         } else {

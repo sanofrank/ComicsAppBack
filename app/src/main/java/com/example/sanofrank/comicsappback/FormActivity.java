@@ -9,15 +9,27 @@ import android.widget.EditText;
 
 public class FormActivity extends Activity {
 
+    EditText editText;
+    String barcode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
-        String barcode = getIntent().getExtras().getString("barcode");
-        EditText editText = (EditText) findViewById(R.id.edit_barcode);
-        editText.setText(barcode);
+
+        barcode = getIntent().getExtras().getString("barcode");
+        editText = (EditText) findViewById(R.id.edit_barcode);
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (barcode != null){
+            editText.setText(barcode);
+            //Toast.makeText(this, barcode , Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
