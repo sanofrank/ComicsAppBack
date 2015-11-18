@@ -34,8 +34,13 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //lib per http service
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.journeyapps:zxing-android-embedded:3.0.2@aar'
     compile 'com.google.zxing:core:3.2.0'
-    compile 'com.firebase:firebase-client-android:2.4.0+'
+
+    compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
+    compile 'com.loopj.android:android-async-http:1.4.9'
+    compile 'com.android.support:design:22.2.1'
 }

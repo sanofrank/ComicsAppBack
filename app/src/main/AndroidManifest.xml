@@ -27,6 +27,11 @@
             android:name=".FormActivity"
             android:label="@string/title_activity_form" >
         </activity>
+        <activity
+            android:name=".Visualizza"
+            android:label="@string/title_activity_visualizza"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

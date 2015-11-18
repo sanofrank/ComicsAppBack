@@ -12,6 +12,7 @@
     <!--FormActivity-->
     <string name="title_activity_form">FormActivity</string>
     <string name="form_intro">Inserisci i dati del prodotto</string>
+    <string name="barcode">Codice a Barre</string>
     <string name="titolo">Titolo:</string>
     <string name="cod">Codice a Barre:</string>
     <string name="autore">Autore</string>
@@ -23,6 +24,7 @@
     <string name="prezzo">Prezzo</string>
     <string name="quantita">Quantità</string>
     <string name="descr">Descrizione</string>
+    <string name="title_activity_visualizza">Visualizza</string>
 
 
 

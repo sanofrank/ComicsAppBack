@@ -33,6 +33,7 @@ public class Aggiungi extends Activity {
             @Override
             public void onClick(View v) {
                 Intent add = new Intent(Aggiungi.this, FormActivity.class);
+                add.putExtra("",barcode);
                 startActivity(add);
             }
         });

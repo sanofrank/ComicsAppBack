@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.firebase.client.Firebase;
+
 
 public class MainActivity extends Activity {
 
@@ -16,16 +16,28 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Firebase da aggiungere sull'activity con il DB
-        Firebase.setAndroidContext(this);
-        Button btn = (Button) findViewById(R.id.aggiungi);
-        btn.setOnClickListener(new View.OnClickListener() {
+
+        //bottoni
+        Button btnadd = (Button) findViewById(R.id.aggiungi);
+        Button btnview = (Button) findViewById(R.id.visualizza);
+        //btnadd listner
+        btnadd.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v){
             Intent add = new Intent(MainActivity.this, Aggiungi.class);
             startActivity(add);
             }
         });
+
+        //btnview listner
+        btnview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                Intent add = new Intent(MainActivity.this, Visualizza.class);
+                startActivity(add);
+            }
+        });
+
     }
 
     @Override
