@@ -1,7 +1,9 @@
 package com.example.sanofrank.comicsappback;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,14 +15,49 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Aggiungi extends Activity {
 
-    private String barcode;
+    //private String barcode;
+    String cod_b;
+
+    // Progress Dialog
+    private ProgressDialog pDialog;
+
+    JSONParser jsonParser = new JSONParser();
+
+    // url to create check product
+    private static String url_create_product = "http://comicsapp.altervista.org/check_barcode.php";
+
+    // JSON Node names
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_PRODUCT = "product";
+    private static final String TAG_COD_B = "cod_b";
+    private static final String TAG_TITOLO = "titolo";
+    private static final String TAG_AUTORE = "autore";
+    private static final String TAG_DISEGNATORE = "disegnatore";
+    private static final String TAG_CASA_ED = "casa_ed";
+    private static final String TAG_ANNO = "anno";
+    private static final String TAG_GEN = "gen";
+    private static final String TAG_PREZZO = "prezzo";
+    private static final String TAG_QUANTITA = "quantita";
+    private static final String TAG_DESCR = "descr";
+
+
+    JSONArray product = null;
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
-        savedInstanceState.putString("barcode", barcode);
+        savedInstanceState.putString("barcode", cod_b);
 
     }
 
@@ -33,7 +70,7 @@ public class Aggiungi extends Activity {
             @Override
             public void onClick(View v) {
                 Intent add = new Intent(Aggiungi.this, FormActivity.class);
-                add.putExtra("",barcode);
+                add.putExtra("",cod_b);
                 startActivity(add);
             }
         });
@@ -87,12 +124,13 @@ public class Aggiungi extends Activity {
                 Log.d("MainActivity", "Scanned");
                 //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
 
-                barcode = result.getContents();
-                if (barcode != null){
-                    Intent ag = new Intent(Aggiungi.this, FormActivity.class);
-                    ag.putExtra("barcode", barcode);
-                    startActivity(ag);
+                cod_b = result.getContents();
+                if (cod_b != null){
+                    /*Intent ag = new Intent(Aggiungi.this, FormActivity.class);
 
+                    ag.putExtra("barcode", barcode);
+                    startActivity(ag);*/
+                    new CheckProduct().execute(cod_b);
                 }
 
             }
@@ -100,6 +138,104 @@ public class Aggiungi extends Activity {
             Log.d("MainActivity", "Weird");
             // This is important, otherwise the result will not be passed to the fragment
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    class CheckProduct extends AsyncTask <String, String, String> {
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(Aggiungi.this);
+            pDialog.setMessage("Checking Product..");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+
+            String codB = args[0];
+            /*String codB = args[0];
+            String titolo = args[1];
+            String autore = args[2];
+            String disegnatore = args[3];
+            String casa_ed = args[4];
+            String anno = args[5];
+            String gen = args[6];
+            String prezzo = args[7];
+            String quantita = args[8];
+            String descr = args[9];*/
+
+            // Building Parameters
+            List<NameValuePair> params2 = new ArrayList<NameValuePair>();
+            params2.add(new BasicNameValuePair("cod_b", codB));
+            /*params.add(new BasicNameValuePair("cod_b", codB));
+            params.add(new BasicNameValuePair("titolo", titolo));
+            params.add(new BasicNameValuePair("autore", autore));
+            params.add(new BasicNameValuePair("disegnatore", disegnatore));
+            params.add(new BasicNameValuePair("casa_ed", casa_ed));
+            params.add(new BasicNameValuePair("anno", anno));
+            params.add(new BasicNameValuePair("gen", gen));
+            params.add(new BasicNameValuePair("prezzo", prezzo));
+            params.add(new BasicNameValuePair("quantita", quantita));
+            params.add(new BasicNameValuePair("descrizione", descr));*/
+
+
+
+            JSONObject json2 = jsonParser.makeHttpRequest(url_create_product, "POST", params2);
+            Log.d("Match product: ", json2.toString());
+
+            try{
+
+                int success = json2.getInt(TAG_SUCCESS);
+
+                if (success == 1) {
+
+                    product = json2.getJSONArray(TAG_PRODUCT);
+
+                    JSONObject check = product.getJSONObject(1);
+
+                    String cod_b = check.getString(TAG_COD_B);
+                    String titolo = check.getString(TAG_TITOLO);
+                    String autore = check.getString(TAG_AUTORE);
+                    String disegnatore = check.getString(TAG_DISEGNATORE);
+                    String casa_ed = check.getString(TAG_CASA_ED);
+                    String anno = check.getString(TAG_ANNO);
+                    String gen = check.getString(TAG_GEN);
+                    String prezzo = check.getString(TAG_PREZZO);
+                    String quantita = check.getString(TAG_QUANTITA);
+                    String descr = check.getString(TAG_DESCR);
+
+
+                    // successfully checked product
+                    Intent i = new Intent(getApplicationContext(), FormActivity.class);
+                    i.putExtra("barcode", cod_b);
+                    i.putExtra("titolo", titolo);
+                    startActivity(i);
+
+
+                    // closing this screen
+                    finish();
+                }
+
+                else{
+                    Intent i = new Intent(getApplicationContext(), FormActivity.class);
+                    i.putExtra("barcode", cod_b);
+                    startActivity(i);
+                }
+
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            pDialog.dismiss();
         }
     }
 

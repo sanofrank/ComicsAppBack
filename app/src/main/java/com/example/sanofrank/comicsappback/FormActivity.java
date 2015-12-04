@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,6 +32,15 @@ public class FormActivity extends Activity {
 
     EditText editText;
     String barcode;
+    String titolo;
+    String autore ;
+    String disegnatore;
+    String casa_ed;
+    String anno;
+    String gen;
+    String prezzo;
+    String quantita;
+    String descr;
 
     // Progress Dialog
     private ProgressDialog pDialog;
@@ -57,12 +67,16 @@ public class FormActivity extends Activity {
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
+    private static final String TAG_PRODUCT = "product";
+
+    JSONArray product = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
         barcode = getIntent().getExtras().getString("barcode");
+        titolo = getIntent().getExtras().getString("titolo");
         editText = (EditText) findViewById(R.id.edit_barcode);
 
         // Edit Text
@@ -111,6 +125,7 @@ public class FormActivity extends Activity {
         //se ha trovato un codice a barre lo inserisce all'interno dell'EditText
         if (barcode != null){
             editText.setText(barcode);
+            editText.setText(titolo);
             //Toast.makeText(this, barcode , Toast.LENGTH_LONG).show();
         }
 
@@ -173,6 +188,7 @@ public class FormActivity extends Activity {
             JSONObject json = jsonParser.makeHttpRequest(url_create_product,
                     "POST", params);
 
+
             // check log cat fro response
             Log.d("Create Response", json.toString());
             
@@ -188,9 +204,11 @@ public class FormActivity extends Activity {
 
                     // closing this screen
                     finish();
-                } else {
-                    // failed to create product
                 }
+
+
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
