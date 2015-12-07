@@ -28,7 +28,7 @@ import java.util.List;
 public class Aggiungi extends Activity {
 
     //private String barcode;
-    String cod_b;
+    private String cod_b;
 
     // Progress Dialog
     private ProgressDialog pDialog;
@@ -36,7 +36,7 @@ public class Aggiungi extends Activity {
     JSONParser jsonParser = new JSONParser();
 
     // url to create check product
-    private static String url_create_product = "http://comicsapp.altervista.org/check_barcode.php";
+    private static String url_check_product = "http://comicsapp.altervista.org/check_product.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
@@ -130,6 +130,7 @@ public class Aggiungi extends Activity {
 
                     ag.putExtra("barcode", barcode);
                     startActivity(ag);*/
+                    Log.d("codice",cod_b);
                     new CheckProduct().execute(cod_b);
                 }
 
@@ -181,10 +182,11 @@ public class Aggiungi extends Activity {
             params.add(new BasicNameValuePair("quantita", quantita));
             params.add(new BasicNameValuePair("descrizione", descr));*/
 
+            Log.d("cod_b",codB);
+            Log.d("params",params2.toString());
 
-
-            JSONObject json2 = jsonParser.makeHttpRequest(url_create_product, "POST", params2);
-            Log.d("Match product: ", json2.toString());
+            JSONObject json2 = jsonParser.makeHttpRequest(url_check_product,"POST", params2);
+            Log.d("Risultato ", json2.toString());
 
             try{
 
@@ -194,22 +196,25 @@ public class Aggiungi extends Activity {
 
                     product = json2.getJSONArray(TAG_PRODUCT);
 
-                    JSONObject check = product.getJSONObject(1);
+                    JSONObject check = product.getJSONObject(0);
+
+                    Log.d("check",check.toString());
 
                     String cod_b = check.getString(TAG_COD_B);
                     String titolo = check.getString(TAG_TITOLO);
-                    String autore = check.getString(TAG_AUTORE);
+                    /*String autore = check.getString(TAG_AUTORE);
                     String disegnatore = check.getString(TAG_DISEGNATORE);
                     String casa_ed = check.getString(TAG_CASA_ED);
                     String anno = check.getString(TAG_ANNO);
                     String gen = check.getString(TAG_GEN);
                     String prezzo = check.getString(TAG_PREZZO);
                     String quantita = check.getString(TAG_QUANTITA);
-                    String descr = check.getString(TAG_DESCR);
+                    String descr = check.getString(TAG_DESCR);*/
 
+                    Log.d("codice",cod_b);
 
                     // successfully checked product
-                    Intent i = new Intent(getApplicationContext(), FormActivity.class);
+                    Intent i = new Intent(Aggiungi.this, FormActivity.class);
                     i.putExtra("barcode", cod_b);
                     i.putExtra("titolo", titolo);
                     startActivity(i);
@@ -217,12 +222,13 @@ public class Aggiungi extends Activity {
 
                     // closing this screen
                     finish();
-                }
-
-                else{
-                    Intent i = new Intent(getApplicationContext(), FormActivity.class);
-                    i.putExtra("barcode", cod_b);
+                } else{
+                    Intent i = new Intent(Aggiungi.this, FormActivity.class);
+                    Log.d("barcode",codB);
+                    i.putExtra("barcode", codB);
                     startActivity(i);
+
+
                 }
 
             }

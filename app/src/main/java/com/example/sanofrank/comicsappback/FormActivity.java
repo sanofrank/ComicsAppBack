@@ -125,7 +125,7 @@ public class FormActivity extends Activity {
         //se ha trovato un codice a barre lo inserisce all'interno dell'EditText
         if (barcode != null){
             editText.setText(barcode);
-            editText.setText(titolo);
+            inputTitolo.setText(titolo);
             //Toast.makeText(this, barcode , Toast.LENGTH_LONG).show();
         }
 
