@@ -47,10 +47,10 @@ public class Aggiungi extends Activity {
     private static final String TAG_DISEGNATORE = "disegnatore";
     private static final String TAG_CASA_ED = "casa_ed";
     private static final String TAG_ANNO = "anno";
-    private static final String TAG_GEN = "gen";
+    private static final String TAG_GEN = "genere";
     private static final String TAG_PREZZO = "prezzo";
     private static final String TAG_QUANTITA = "quantita";
-    private static final String TAG_DESCR = "descr";
+    private static final String TAG_DESCR = "descrizione";
 
 
     JSONArray product = null;
@@ -202,21 +202,31 @@ public class Aggiungi extends Activity {
 
                     String cod_b = check.getString(TAG_COD_B);
                     String titolo = check.getString(TAG_TITOLO);
-                    /*String autore = check.getString(TAG_AUTORE);
+                    String autore = check.getString(TAG_AUTORE);
                     String disegnatore = check.getString(TAG_DISEGNATORE);
                     String casa_ed = check.getString(TAG_CASA_ED);
                     String anno = check.getString(TAG_ANNO);
                     String gen = check.getString(TAG_GEN);
                     String prezzo = check.getString(TAG_PREZZO);
-                    String quantita = check.getString(TAG_QUANTITA);
-                    String descr = check.getString(TAG_DESCR);*/
+                    int quantita = check.getInt(TAG_QUANTITA);
+                    String descr = check.getString(TAG_DESCR);
 
-                    Log.d("codice",cod_b);
+
 
                     // successfully checked product
                     Intent i = new Intent(Aggiungi.this, FormActivity.class);
                     i.putExtra("barcode", cod_b);
                     i.putExtra("titolo", titolo);
+                    i.putExtra("autore", autore);
+                    i.putExtra("disegnatore", disegnatore);
+                    i.putExtra("casa_ed", casa_ed);
+                    i.putExtra("anno", anno);
+                    i.putExtra("gen", gen);
+                    i.putExtra("prezzo", prezzo);
+                    i.putExtra("quantita", quantita);
+                    i.putExtra("descr", descr);
+
+
                     startActivity(i);
 
 
@@ -224,8 +234,8 @@ public class Aggiungi extends Activity {
                     finish();
                 } else{
                     Intent i = new Intent(Aggiungi.this, FormActivity.class);
-                    Log.d("barcode",codB);
-                    i.putExtra("barcode", codB);
+                    Log.d("barcode",cod_b);
+                    i.putExtra("barcode", cod_b);
                     startActivity(i);
 
 

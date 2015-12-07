@@ -33,13 +33,13 @@ public class FormActivity extends Activity {
     EditText editText;
     String barcode;
     String titolo;
-    String autore ;
+    String autore;
     String disegnatore;
     String casa_ed;
     String anno;
     String gen;
     String prezzo;
-    String quantita;
+    int quantita;
     String descr;
 
     // Progress Dialog
@@ -75,12 +75,21 @@ public class FormActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
+
+        //prendo i valori
         barcode = getIntent().getExtras().getString("barcode");
         titolo = getIntent().getExtras().getString("titolo");
-        editText = (EditText) findViewById(R.id.edit_barcode);
+        autore = getIntent().getExtras().getString("autore");
+        disegnatore = getIntent().getExtras().getString("disegnatore");
+        casa_ed = getIntent().getExtras().getString("casa_ed");
+        anno = getIntent().getExtras().getString("anno");
+        gen = getIntent().getExtras().getString("gen");
+        prezzo = getIntent().getExtras().getString("prezzo");
+        quantita = getIntent().getExtras().getInt("quantita");
+        descr = getIntent().getExtras().getString("descr");
 
-        // Edit Text
-        //inputCodb = (EditText) findViewById(R.id.edit_barcode);
+        //prendo gli editTExt
+        editText = (EditText) findViewById(R.id.edit_barcode);
         inputTitolo = (EditText) findViewById(R.id.edit_name);
         inputAutore = (EditText) findViewById(R.id.edit_autore);
         inputDisegnatore = (EditText) findViewById(R.id.edit_disegnatore);
@@ -126,6 +135,14 @@ public class FormActivity extends Activity {
         if (barcode != null){
             editText.setText(barcode);
             inputTitolo.setText(titolo);
+            inputAutore.setText(autore);
+            inputDisegnatore.setText(disegnatore);
+            inputCasa_ed.setText(casa_ed);
+            inputAnno.setText(anno);
+            inputGen.setText(gen);
+            inputPrezzo.setText(prezzo);
+            inputQuantita.setText(String.valueOf(quantita));
+            inputDescr.setText(descr);
             //Toast.makeText(this, barcode , Toast.LENGTH_LONG).show();
         }
 
@@ -167,6 +184,7 @@ public class FormActivity extends Activity {
             String descr = args[9];
 
 
+            int quantitaInt = Integer.parseInt(quantita);
 
 
 
@@ -179,8 +197,8 @@ public class FormActivity extends Activity {
             params.add(new BasicNameValuePair("casa_ed", casa_ed));
             params.add(new BasicNameValuePair("anno", anno));
             params.add(new BasicNameValuePair("gen", gen));
-            params.add(new BasicNameValuePair("prezzo", prezzo));
-            params.add(new BasicNameValuePair("quantita", quantita));
+            params.add(new BasicNameValuePair("prezzo",prezzo));
+            params.add(new BasicNameValuePair("quantita", Integer.toString(quantitaInt)));
             params.add(new BasicNameValuePair("descrizione", descr));
 
             // getting JSON Object
