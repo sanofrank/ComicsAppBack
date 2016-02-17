@@ -2,9 +2,11 @@ package com.example.sanofrank.comicsappback;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,10 +35,15 @@ public class Aggiungi extends Activity {
     // Progress Dialog
     private ProgressDialog pDialog;
 
+
     JSONParser jsonParser = new JSONParser();
 
     // url to create check product
     private static String url_check_product = "http://comicsapp.altervista.org/check_product.php";
+
+    //Alert Dialog
+    AlertDialog.Builder builder1;
+
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
@@ -75,7 +82,6 @@ public class Aggiungi extends Activity {
             }
         });
 
-        //Toast.makeText(this, barcode , Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -157,30 +163,10 @@ public class Aggiungi extends Activity {
         protected String doInBackground(String... args) {
 
             String codB = args[0];
-            /*String codB = args[0];
-            String titolo = args[1];
-            String autore = args[2];
-            String disegnatore = args[3];
-            String casa_ed = args[4];
-            String anno = args[5];
-            String gen = args[6];
-            String prezzo = args[7];
-            String quantita = args[8];
-            String descr = args[9];*/
 
             // Building Parameters
             List<NameValuePair> params2 = new ArrayList<NameValuePair>();
             params2.add(new BasicNameValuePair("cod_b", codB));
-            /*params.add(new BasicNameValuePair("cod_b", codB));
-            params.add(new BasicNameValuePair("titolo", titolo));
-            params.add(new BasicNameValuePair("autore", autore));
-            params.add(new BasicNameValuePair("disegnatore", disegnatore));
-            params.add(new BasicNameValuePair("casa_ed", casa_ed));
-            params.add(new BasicNameValuePair("anno", anno));
-            params.add(new BasicNameValuePair("gen", gen));
-            params.add(new BasicNameValuePair("prezzo", prezzo));
-            params.add(new BasicNameValuePair("quantita", quantita));
-            params.add(new BasicNameValuePair("descrizione", descr));*/
 
             Log.d("cod_b",codB);
             Log.d("params",params2.toString());
@@ -201,7 +187,7 @@ public class Aggiungi extends Activity {
                     Log.d("check",check.toString());
 
                     String cod_b = check.getString(TAG_COD_B);
-                    String titolo = check.getString(TAG_TITOLO);
+                   /* String titolo = check.getString(TAG_TITOLO);
                     String autore = check.getString(TAG_AUTORE);
                     String disegnatore = check.getString(TAG_DISEGNATORE);
                     String casa_ed = check.getString(TAG_CASA_ED);
@@ -209,14 +195,15 @@ public class Aggiungi extends Activity {
                     String gen = check.getString(TAG_GEN);
                     String prezzo = check.getString(TAG_PREZZO);
                     int quantita = check.getInt(TAG_QUANTITA);
-                    String descr = check.getString(TAG_DESCR);
+                    String descr = check.getString(TAG_DESCR);*/
 
 
 
                     // successfully checked product
                     Intent i = new Intent(Aggiungi.this, FormActivity.class);
+                    i.putExtra("match",success);
                     i.putExtra("barcode", cod_b);
-                    i.putExtra("titolo", titolo);
+                    /*i.putExtra("titolo", titolo);
                     i.putExtra("autore", autore);
                     i.putExtra("disegnatore", disegnatore);
                     i.putExtra("casa_ed", casa_ed);
@@ -224,18 +211,20 @@ public class Aggiungi extends Activity {
                     i.putExtra("gen", gen);
                     i.putExtra("prezzo", prezzo);
                     i.putExtra("quantita", quantita);
-                    i.putExtra("descr", descr);
+                    i.putExtra("descr", descr);*/
 
 
                     startActivity(i);
 
 
-                    // closing this screen
-                    finish();
+
+
                 } else{
+
                     Intent i = new Intent(Aggiungi.this, FormActivity.class);
                     Log.d("barcode",cod_b);
                     i.putExtra("barcode", cod_b);
+                    i.putExtra("match",0);
                     startActivity(i);
 
 
@@ -252,6 +241,9 @@ public class Aggiungi extends Activity {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
             pDialog.dismiss();
+            // closing this screen
+            finish();
+
         }
     }
 

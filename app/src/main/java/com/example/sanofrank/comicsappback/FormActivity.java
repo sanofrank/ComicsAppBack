@@ -1,11 +1,11 @@
 package com.example.sanofrank.comicsappback;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -14,23 +14,36 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.Fragment;
+import android.content.DialogInterface;
+import android.support.v4.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import java.util.Date;
+import android.widget.TextView;
+
+
+public class FormActivity extends FragmentActivity {
 
 
 
-public class FormActivity extends Activity {
 
-    EditText editText;
+
+    int match;
     String barcode;
     String titolo;
     String autore;
@@ -45,40 +58,98 @@ public class FormActivity extends Activity {
     // Progress Dialog
     private ProgressDialog pDialog;
 
+    ArrayList<HashMap<String, String>> productsList;
 
     JSONParser jsonParser = new JSONParser();
+
    // EditText inputCodb;
+    EditText editText;
     EditText inputTitolo;
     EditText inputDisegnatore;
     EditText inputAutore;
     EditText inputCasa_ed;
-    EditText inputAnno;
+    static EditText inputAnno;
     EditText inputGen;
     EditText inputPrezzo;
     EditText inputQuantita;
     EditText inputDescr;
 
-    //Date Formatter
-    /*DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); // Make sure user insert date into edittext in this format.
-    Date dateObject;*/
+
+
+    //Date Fragment
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            inputAnno.setText( ""+ day + "-" + (month + 1) + "-" + year);
+        }
+    }
+
+
+
+
 
     // url to create new product
     private static String url_create_product = "http://comicsapp.altervista.org/create_product.php";
+    //url to update product
+    private static String url_update_product = "http://comicsapp.altervista.org/update_product.php";
+    //url to delete product
+    private static String url_delete_product = "http://comicsapp.altervista.org/delete_product.php";
+    //url to download info
+    private static String url_downloadinfo_product = "http://comicsapp.altervista.org/check_product.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_PRODUCT = "product";
+    private static final String TAG_COD_B = "cod_b";
+    private static final String TAG_TITOLO = "titolo";
+    private static final String TAG_AUTORE = "autore";
+    private static final String TAG_DISEGNATORE = "disegnatore";
+    private static final String TAG_CASA_ED = "casa_ed";
+    private static final String TAG_ANNO = "anno";
+    private static final String TAG_GEN = "genere";
+    private static final String TAG_PREZZO = "prezzo";
+    private static final String TAG_QUANTITA = "quantita";
+    private static final String TAG_DESCR = "descrizione";
 
     JSONArray product = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
+        productsList = new ArrayList<HashMap<String, String>>();
+
+        //Creo i bottoni
+        Button btnCreateProduct = (Button) findViewById(R.id.invia);
+        Button btnUpdate = (Button) findViewById(R.id.modifica);
+        Button btnDelete = (Button) findViewById(R.id.elimina);
+
+        //Rendo i bottoni invisibili
+
+        btnDelete.setVisibility(View.GONE);
+        btnUpdate.setVisibility(View.GONE);
+
         //prendo i valori
+
+        match = getIntent().getExtras().getInt("match");
         barcode = getIntent().getExtras().getString("barcode");
-        titolo = getIntent().getExtras().getString("titolo");
+        /*titolo = getIntent().getExtras().getString("titolo");
         autore = getIntent().getExtras().getString("autore");
         disegnatore = getIntent().getExtras().getString("disegnatore");
         casa_ed = getIntent().getExtras().getString("casa_ed");
@@ -86,7 +157,7 @@ public class FormActivity extends Activity {
         gen = getIntent().getExtras().getString("gen");
         prezzo = getIntent().getExtras().getString("prezzo");
         quantita = getIntent().getExtras().getInt("quantita");
-        descr = getIntent().getExtras().getString("descr");
+        descr = getIntent().getExtras().getString("descr");*/
 
         //prendo gli editTExt
         editText = (EditText) findViewById(R.id.edit_barcode);
@@ -94,15 +165,39 @@ public class FormActivity extends Activity {
         inputAutore = (EditText) findViewById(R.id.edit_autore);
         inputDisegnatore = (EditText) findViewById(R.id.edit_disegnatore);
         inputCasa_ed = (EditText) findViewById(R.id.edit_casa_ed);
-        inputAnno = (EditText) findViewById(R.id.edit_anno);
+        inputAnno = (EditText) findViewById(R.id.edit_date);
         inputGen = (EditText) findViewById(R.id.edit_genere);
         inputPrezzo = (EditText) findViewById(R.id.edit_prezzo);
         inputQuantita = (EditText) findViewById(R.id.edit_quantita);
         inputDescr = (EditText) findViewById(R.id.edit_descr);
 
-        // Create button
+        if(match==1){
 
-        Button btnCreateProduct = (Button) findViewById(R.id.form_button);
+            btnCreateProduct.setVisibility(View.GONE);
+            btnDelete.setVisibility(View.VISIBLE);
+            btnUpdate.setVisibility(View.VISIBLE);
+            editText.setKeyListener(null);
+
+            new DownloadInfo().execute();
+
+            /*inputTitolo.setText(titolo);
+            inputAutore.setText(autore);
+            inputDisegnatore.setText(disegnatore);
+            inputCasa_ed.setText(casa_ed);
+            inputAnno.setText(anno);
+            inputGen.setText(gen);
+            inputPrezzo.setText(prezzo);
+            inputQuantita.setText(String.valueOf(quantita));
+            inputDescr.setText(descr);*/
+        }
+
+
+
+        if (barcode != null){
+            editText.setText(barcode);
+        }
+
+
 
         // button click event
         btnCreateProduct.setOnClickListener(new View.OnClickListener() {
@@ -124,27 +219,47 @@ public class FormActivity extends Activity {
                                             }
 
         );
+
+        //update click event
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    // creating new product in background thread
+                                                    String codB = editText.getText().toString();
+                                                    String titolo = inputTitolo.getText().toString();
+                                                    String autore = inputAutore.getText().toString();
+                                                    String disegnatore = inputDisegnatore.getText().toString();
+                                                    String casa_ed = inputCasa_ed.getText().toString();
+                                                    String anno = inputAnno.getText().toString();
+                                                    String gen = inputGen.getText().toString();
+                                                    String prezzo = inputPrezzo.getText().toString();
+                                                    String quantita = inputQuantita.getText().toString();
+                                                    String descr = inputDescr.getText().toString();
+                                                    new UpdateProduct().execute(codB,titolo,autore,disegnatore,casa_ed,anno,gen,prezzo,quantita,descr);
+                                                }
+                                            }
+
+        );
+
+        //delete click event
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View view) {
+                                             // creating new product in background thread
+                                             String codB = editText.getText().toString();
+                                             new DeleteProduct().execute(codB);
+                                         }
+                                     }
+
+        );
     }
 
     //Per quando ruoto il dispositivo
     @Override
     protected void onStart() {
         super.onStart();
+        editText.setText(titolo);
 
-        //se ha trovato un codice a barre lo inserisce all'interno dell'EditText
-        if (barcode != null){
-            editText.setText(barcode);
-            inputTitolo.setText(titolo);
-            inputAutore.setText(autore);
-            inputDisegnatore.setText(disegnatore);
-            inputCasa_ed.setText(casa_ed);
-            inputAnno.setText(anno);
-            inputGen.setText(gen);
-            inputPrezzo.setText(prezzo);
-            inputQuantita.setText(String.valueOf(quantita));
-            inputDescr.setText(descr);
-            //Toast.makeText(this, barcode , Toast.LENGTH_LONG).show();
-        }
 
     }
 
@@ -184,7 +299,7 @@ public class FormActivity extends Activity {
             String descr = args[9];
 
 
-            int quantitaInt = Integer.parseInt(quantita);
+
 
 
 
@@ -198,7 +313,7 @@ public class FormActivity extends Activity {
             params.add(new BasicNameValuePair("anno", anno));
             params.add(new BasicNameValuePair("gen", gen));
             params.add(new BasicNameValuePair("prezzo",prezzo));
-            params.add(new BasicNameValuePair("quantita", Integer.toString(quantitaInt)));
+            params.add(new BasicNameValuePair("quantita", quantita));
             params.add(new BasicNameValuePair("descrizione", descr));
 
             // getting JSON Object
@@ -240,6 +355,266 @@ public class FormActivity extends Activity {
         }
     }
 
+    //Update Product class
+
+    class UpdateProduct extends AsyncTask<String, String, String> {
+
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(FormActivity.this);
+            pDialog.setMessage("Updating product...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        /**
+         * Creating product
+         */
+        protected String doInBackground(String... args) {
+
+            String codB = args[0];
+            String titolo = args[1];
+            String autore = args[2];
+            String disegnatore = args[3];
+            String casa_ed = args[4];
+            String anno = args[5];
+            String gen = args[6];
+            String prezzo = args[7];
+            String quantita = args[8];
+            String descr = args[9];
+
+
+
+
+
+
+            // Building Parameters
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("cod_b", codB));
+            params.add(new BasicNameValuePair("titolo", titolo));
+            params.add(new BasicNameValuePair("autore", autore));
+            params.add(new BasicNameValuePair("disegnatore", disegnatore));
+            params.add(new BasicNameValuePair("casa_ed", casa_ed));
+            params.add(new BasicNameValuePair("anno", anno));
+            params.add(new BasicNameValuePair("gen", gen));
+            params.add(new BasicNameValuePair("prezzo",prezzo));
+            params.add(new BasicNameValuePair("quantita", quantita));
+            params.add(new BasicNameValuePair("descrizione", descr));
+
+
+
+            // getting JSON Object
+            // Note that create product url accepts POST method
+            JSONObject json = jsonParser.makeHttpRequest(url_update_product,
+                    "POST", params);
+
+
+            // check log cat fro response
+            Log.d("Update", json.toString());
+
+
+            // check for success tag
+            try {
+                int success = json.getInt(TAG_SUCCESS);
+
+                if (success == 1) {
+                    // successfully created product
+                    Intent i = new Intent(getApplicationContext(), Aggiungi.class);
+                    startActivity(i);
+
+                    // closing this screen
+                    finish();
+                }
+
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            pDialog.dismiss();
+        }
+    }
+
+    //Delete Product Class
+
+    class DeleteProduct extends AsyncTask<String, String, String> {
+
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(FormActivity.this);
+            pDialog.setMessage("Deleting Product...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        /**
+         * Creating product
+         */
+        protected String doInBackground(String... args) {
+
+            String codB = args[0];
+
+            // Building Parameters
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("cod_b", codB));
+
+            Log.d("params",params.toString());
+
+            // getting JSON Object
+            // Note that create product url accepts POST method
+            JSONObject json = jsonParser.makeHttpRequest(url_delete_product,
+                    "POST", params);
+
+            // check log cat fro response
+            Log.d("Delete ", json.toString());
+
+
+            // check for success tag
+            try {
+                int success = json.getInt(TAG_SUCCESS);
+
+                if (success == 1) {
+                    // successfully created product
+                    Intent i = new Intent(getApplicationContext(), Aggiungi.class);
+                    startActivity(i);
+
+                    // closing this screen
+                    finish();
+                }
+
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            pDialog.dismiss();
+        }
+    }
+
+    //Download informations
+
+    class DownloadInfo extends AsyncTask <String, String, String> {
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(FormActivity.this);
+            pDialog.setMessage("Downloading Information...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+
+            // Building Parameters
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("cod_b", barcode));
+
+            Log.d("cod_b",barcode);
+            Log.d("params",params.toString());
+
+            JSONObject json2 = jsonParser.makeHttpRequest(url_downloadinfo_product,"POST", params);
+            Log.d("Risultato ", json2.toString());
+
+            try{
+
+                int success = json2.getInt(TAG_SUCCESS);
+
+                if (success == 1) {
+
+                    product = json2.getJSONArray(TAG_PRODUCT);
+
+                    JSONObject check = product.getJSONObject(0);
+
+                    Log.d("check",check.toString());
+
+                    String cod_b = check.getString(TAG_COD_B);
+                    String titolo = check.getString(TAG_TITOLO);
+                    String autore = check.getString(TAG_AUTORE);
+                    String disegnatore = check.getString(TAG_DISEGNATORE);
+                    String casa_ed = check.getString(TAG_CASA_ED);
+                    String anno = check.getString(TAG_ANNO);
+                    String gen = check.getString(TAG_GEN);
+                    String prezzo = check.getString(TAG_PREZZO);
+                    int quantita = check.getInt(TAG_QUANTITA);
+                    String descr = check.getString(TAG_DESCR);
+
+                    // creating new HashMap
+                    HashMap<String, String> map = new HashMap<String, String>();
+
+                    // adding each child node to HashMap key => value
+                    map.put(TAG_COD_B, cod_b);
+                    map.put(TAG_TITOLO, titolo);
+                    map.put(TAG_AUTORE, autore);
+                    map.put(TAG_DISEGNATORE, disegnatore);
+                    map.put(TAG_CASA_ED, casa_ed);
+                    map.put(TAG_ANNO, anno);
+                    map.put(TAG_GEN, gen);
+                    map.put(TAG_PREZZO, prezzo);
+                    map.put(TAG_QUANTITA, String.valueOf(quantita));
+                    map.put(TAG_DESCR, descr);
+
+                    productsList.add(map);
+
+                }
+
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            pDialog.dismiss();
+            editText.setText(productsList.get(0).get(TAG_COD_B));
+            inputTitolo.setText(productsList.get(0).get(TAG_TITOLO));
+            inputAutore.setText(productsList.get(0).get(TAG_AUTORE));
+            inputDisegnatore.setText(productsList.get(0).get(TAG_DISEGNATORE));
+            inputCasa_ed.setText(productsList.get(0).get(TAG_CASA_ED));
+            inputAnno.setText(productsList.get(0).get(TAG_ANNO));
+            inputGen.setText(productsList.get(0).get(TAG_GEN));
+            inputPrezzo.setText(productsList.get(0).get(TAG_PREZZO));
+            inputQuantita.setText(productsList.get(0).get(TAG_QUANTITA));
+            inputDescr.setText(productsList.get(0).get(TAG_DESCR));
+            titolo = productsList.get(0).get(TAG_COD_B);
+
+        
+
+        }
+    }
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -261,4 +636,23 @@ public class FormActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void showDatePickerDialog(View v) {
+        hideKeyboard(this);
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(),"datepicker");
+    }
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
+
 }

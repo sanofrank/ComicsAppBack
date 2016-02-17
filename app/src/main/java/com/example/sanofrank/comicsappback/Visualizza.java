@@ -40,7 +40,7 @@ public class Visualizza extends ListActivity {
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_PRODUCTS = "products";
-    private static final String TAG_PID = "cod_b";
+    private static final String TAG_PID = "barcode";
     private static final String TAG_NAME = "titolo";
 
     // products JSONArray
@@ -62,6 +62,28 @@ public class Visualizza extends ListActivity {
 
         // Get listview
         ListView lv = getListView();
+
+        lv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // getting values from selected ListItem
+                String pid = ((TextView) view.findViewById(R.id.cod_b)).getText()
+                        .toString();
+
+                // Starting new intent
+                Intent in = new Intent(getApplicationContext(),
+                        FormActivity.class);
+                // sending pid to next activity
+                in.putExtra(TAG_PID, pid);
+                in.putExtra("match",1);
+
+                // starting new activity and expecting some response back
+                startActivityForResult(in, 100);
+            }
+        });
+
     }
         class LoadAllProducts extends AsyncTask<String, String, String> {
 
@@ -102,7 +124,7 @@ public class Visualizza extends ListActivity {
                             JSONObject c = products.getJSONObject(i);
 
                             // Storing each json item in variable
-                            String id = c.getString(TAG_PID);
+                            String id = c.getString("cod_b");
                             String name = c.getString(TAG_NAME);
 
                             // creating new HashMap
