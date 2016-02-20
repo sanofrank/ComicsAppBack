@@ -1,11 +1,9 @@
 package com.example.sanofrank.comicsappback;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -17,14 +15,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.support.v4.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
-import android.text.InputType;
 import android.util.Log;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,7 +30,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 
 
 public class FormActivity extends FragmentActivity {
@@ -74,8 +69,6 @@ public class FormActivity extends FragmentActivity {
     EditText inputQuantita;
     EditText inputDescr;
 
-
-
     //Date Fragment
 
     public static class DatePickerFragment extends DialogFragment
@@ -110,6 +103,8 @@ public class FormActivity extends FragmentActivity {
     private static String url_delete_product = "http://comicsapp.altervista.org/delete_product.php";
     //url to download info
     private static String url_downloadinfo_product = "http://comicsapp.altervista.org/check_product.php";
+    //url to check product
+    private static String url_check_product = "http://comicsapp.altervista.org/check_product.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
@@ -191,8 +186,6 @@ public class FormActivity extends FragmentActivity {
             inputDescr.setText(descr);*/
         }
 
-
-
         if (barcode != null){
             editText.setText(barcode);
         }
@@ -258,7 +251,7 @@ public class FormActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        editText.setText(titolo);
+
 
 
     }
@@ -266,7 +259,7 @@ public class FormActivity extends FragmentActivity {
     /**
      * Background Async Task to Create new product
      * */
-    class CreateNewProduct extends AsyncTask<String, String, String> {
+    class CreateNewProduct extends AsyncTask<String, String, List<NameValuePair>> {
 
 
         /**
@@ -285,7 +278,7 @@ public class FormActivity extends FragmentActivity {
         /**
          * Creating product
          */
-        protected String doInBackground(String... args) {
+        protected List<NameValuePair> doInBackground(String... args) {
 
             String codB = args[0];
             String titolo = args[1];
@@ -318,7 +311,7 @@ public class FormActivity extends FragmentActivity {
 
             // getting JSON Object
             // Note that create product url accepts POST method
-            JSONObject json = jsonParser.makeHttpRequest(url_create_product,
+            JSONObject json = jsonParser.makeHttpRequest(url_check_product,
                     "POST", params);
 
 
@@ -330,13 +323,21 @@ public class FormActivity extends FragmentActivity {
             try {
                 int success = json.getInt(TAG_SUCCESS);
 
-                if (success == 1) {
+                if (success == 0) {
+
                     // successfully created product
+                    JSONObject json2 = jsonParser.makeHttpRequest(url_create_product,"POST",params);
+                    // check log cat fro response
+                    Log.d("Create Response", json2.toString());
+
                     Intent i = new Intent(getApplicationContext(), Aggiungi.class);
                     startActivity(i);
 
-                    // closing this screen
-                    finish();
+
+                }
+
+                if (success == 1){
+                    return params;
                 }
 
 
@@ -349,11 +350,59 @@ public class FormActivity extends FragmentActivity {
             return null;
         }
 
-        protected void onPostExecute(String file_url) {
+        protected void onPostExecute(final List<NameValuePair> params) {
             // dismiss the dialog once done
             pDialog.dismiss();
+
+            if(params != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(FormActivity.this);
+                builder.setTitle("Attenzione!");
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
+                builder.setMessage("Elemento già inserito, continuare con la modifica? \n ");
+                builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        new Thread(new Runnable() {
+                            public void run() {
+                                JSONObject json = jsonParser.makeHttpRequest(url_update_product, "POST", params);
+                                Log.d("Create Response", json.toString());
+                            }
+                        }).start();
+
+
+
+                        Intent i = new Intent(getApplicationContext(), Aggiungi.class);
+                        startActivity(i);
+
+                        // closing this screen
+                        //finish();
+                    }
+                });
+                builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Intent i = new Intent(getApplicationContext(), Aggiungi.class);
+                        startActivity(i);
+
+
+
+                    }
+                });
+                final AlertDialog alert = builder.create();
+                FormActivity.this.runOnUiThread(new java.lang.Runnable(){
+                    public void run(){
+                        //show AlertDialog
+                        alert.show();
+                    }
+                });
+                //closing this screen
+                finish();
+
+            }
+
         }
     }
+
 
     //Update Product class
 
@@ -428,8 +477,7 @@ public class FormActivity extends FragmentActivity {
                     Intent i = new Intent(getApplicationContext(), Aggiungi.class);
                     startActivity(i);
 
-                    // closing this screen
-                    finish();
+
                 }
 
 
@@ -445,6 +493,8 @@ public class FormActivity extends FragmentActivity {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
             pDialog.dismiss();
+            // closing this screen
+            finish();
         }
     }
 
@@ -496,9 +546,6 @@ public class FormActivity extends FragmentActivity {
                     // successfully created product
                     Intent i = new Intent(getApplicationContext(), Aggiungi.class);
                     startActivity(i);
-
-                    // closing this screen
-                    finish();
                 }
 
 
@@ -514,6 +561,8 @@ public class FormActivity extends FragmentActivity {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
             pDialog.dismiss();
+            // closing this screen
+            finish();
         }
     }
 

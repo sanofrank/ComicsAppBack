@@ -178,6 +178,8 @@ public class Aggiungi extends Activity {
 
                 int success = json2.getInt(TAG_SUCCESS);
 
+
+
                 if (success == 1) {
 
                     product = json2.getJSONArray(TAG_PRODUCT);
@@ -225,6 +227,7 @@ public class Aggiungi extends Activity {
                     Log.d("barcode",cod_b);
                     i.putExtra("barcode", cod_b);
                     i.putExtra("match",0);
+                    Log.d("match",i.putExtra("match",0).toString());
                     startActivity(i);
 
 

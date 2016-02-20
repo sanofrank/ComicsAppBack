@@ -81,6 +81,8 @@ public class Visualizza extends ListActivity {
 
                 // starting new activity and expecting some response back
                 startActivityForResult(in, 100);
+                //closing this screen
+                finish();
             }
         });
 
@@ -177,6 +179,7 @@ public class Visualizza extends ListActivity {
                         setListAdapter(adapter);
                     }
                 });
+
             }
 
 
