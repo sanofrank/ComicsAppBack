@@ -23,6 +23,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +31,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 
 
 public class FormActivity extends FragmentActivity {
@@ -66,7 +68,7 @@ public class FormActivity extends FragmentActivity {
     static EditText inputAnno;
     EditText inputGen;
     EditText inputPrezzo;
-    EditText inputQuantita;
+    static EditText inputQuantita;
     EditText inputDescr;
 
     //Date Fragment
@@ -90,6 +92,49 @@ public class FormActivity extends FragmentActivity {
             inputAnno.setText( ""+ day + "-" + (month + 1) + "-" + year);
         }
     }
+
+    public static class NumberPickerFragment extends DialogFragment
+            implements NumberPicker.OnValueChangeListener {
+        public Dialog onCreateDialog(Bundle savedInstanceState){
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            // Get the layout inflater
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            // Inflate and set the layout for the dialog
+            // Pass null as the parent view because its going in the dialog layout
+            View view = inflater.inflate(R.layout.numberdialog, null);
+            builder.setView(view);
+            final NumberPicker np = (NumberPicker) view.findViewById(R.id.numberPicker1);
+            builder.setTitle("Quantità:");
+            np.setMaxValue(100);
+            np.setMinValue(0);
+            np.setWrapSelectorWheel(false);
+            np.setOnValueChangedListener(this);
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    inputQuantita.setText(String.valueOf(np.getValue()));
+
+                }
+            });
+            builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    inputQuantita.setText(String.valueOf(0));
+
+                }
+            });
+
+            return builder.create();
+        }
+
+        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            inputQuantita.setText(String.valueOf(newVal));
+        }
+    }
+
+
+
+
+
+
 
 
 
@@ -192,6 +237,10 @@ public class FormActivity extends FragmentActivity {
 
 
 
+
+
+
+
         // button click event
         btnCreateProduct.setOnClickListener(new View.OnClickListener() {
                                                 @Override
@@ -217,18 +266,34 @@ public class FormActivity extends FragmentActivity {
         btnUpdate.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
-                                                    // creating new product in background thread
-                                                    String codB = editText.getText().toString();
-                                                    String titolo = inputTitolo.getText().toString();
-                                                    String autore = inputAutore.getText().toString();
-                                                    String disegnatore = inputDisegnatore.getText().toString();
-                                                    String casa_ed = inputCasa_ed.getText().toString();
-                                                    String anno = inputAnno.getText().toString();
-                                                    String gen = inputGen.getText().toString();
-                                                    String prezzo = inputPrezzo.getText().toString();
-                                                    String quantita = inputQuantita.getText().toString();
-                                                    String descr = inputDescr.getText().toString();
-                                                    new UpdateProduct().execute(codB,titolo,autore,disegnatore,casa_ed,anno,gen,prezzo,quantita,descr);
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(FormActivity.this);
+                                                    builder.setTitle("Attenzione!");
+                                                    builder.setIcon(android.R.drawable.ic_dialog_alert);
+                                                    builder.setMessage("Sei sicuro di voler modificare l'elemento? \n ");
+                                                    builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            // creating new product in background thread
+                                                            String codB = editText.getText().toString();
+                                                            String titolo = inputTitolo.getText().toString();
+                                                            String autore = inputAutore.getText().toString();
+                                                            String disegnatore = inputDisegnatore.getText().toString();
+                                                            String casa_ed = inputCasa_ed.getText().toString();
+                                                            String anno = inputAnno.getText().toString();
+                                                            String gen = inputGen.getText().toString();
+                                                            String prezzo = inputPrezzo.getText().toString();
+                                                            String quantita = inputQuantita.getText().toString();
+                                                            String descr = inputDescr.getText().toString();
+                                                            new UpdateProduct().execute(codB,titolo,autore,disegnatore,casa_ed,anno,gen,prezzo,quantita,descr);
+                                                        }
+                                                    });
+                                                    builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+
+                                                        }
+                                                    });
+                                                    final AlertDialog alert = builder.create();
+                                                    alert.show();
+
                                                 }
                                             }
 
@@ -238,9 +303,25 @@ public class FormActivity extends FragmentActivity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
                                          @Override
                                          public void onClick(View view) {
-                                             // creating new product in background thread
-                                             String codB = editText.getText().toString();
-                                             new DeleteProduct().execute(codB);
+
+                                             AlertDialog.Builder builder = new AlertDialog.Builder(FormActivity.this);
+                                             builder.setTitle("Attenzione!");
+                                             builder.setIcon(android.R.drawable.ic_dialog_alert);
+                                             builder.setMessage("Sei sicuro di voler eliminare l'elemento? \n ");
+                                             builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                 public void onClick(DialogInterface dialog, int which) {
+                                                     // creating new product in background thread
+                                                     String codB = editText.getText().toString();
+                                                     new DeleteProduct().execute(codB);
+                                                 }
+                                             });
+                                             builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                                 public void onClick(DialogInterface dialog, int which) {
+
+                                                 }
+                                             });
+                                             final AlertDialog alert = builder.create();
+                                             alert.show();
                                          }
                                      }
 
@@ -332,7 +413,7 @@ public class FormActivity extends FragmentActivity {
 
                     Intent i = new Intent(getApplicationContext(), Aggiungi.class);
                     startActivity(i);
-
+                    finish();
 
                 }
 
@@ -375,7 +456,7 @@ public class FormActivity extends FragmentActivity {
                         startActivity(i);
 
                         // closing this screen
-                        //finish();
+                        finish();
                     }
                 });
                 builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -383,20 +464,20 @@ public class FormActivity extends FragmentActivity {
 
                         Intent i = new Intent(getApplicationContext(), Aggiungi.class);
                         startActivity(i);
-
+                        //closing this screen
+                        finish();
 
 
                     }
                 });
                 final AlertDialog alert = builder.create();
-                FormActivity.this.runOnUiThread(new java.lang.Runnable(){
-                    public void run(){
+                FormActivity.this.runOnUiThread(new java.lang.Runnable() {
+                    public void run() {
                         //show AlertDialog
                         alert.show();
                     }
                 });
-                //closing this screen
-                finish();
+
 
             }
 
@@ -546,6 +627,7 @@ public class FormActivity extends FragmentActivity {
                     // successfully created product
                     Intent i = new Intent(getApplicationContext(), Aggiungi.class);
                     startActivity(i);
+
                 }
 
 
@@ -686,11 +768,20 @@ public class FormActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void showNumberPickerDialog(View v){
+
+        hideKeyboard(this);
+        DialogFragment newFragment = new NumberPickerFragment();
+        newFragment.show(getSupportFragmentManager(),"numberpicker");
+    }
+
     public void showDatePickerDialog(View v) {
         hideKeyboard(this);
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(),"datepicker");
     }
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.

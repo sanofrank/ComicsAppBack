@@ -79,6 +79,7 @@ public class Aggiungi extends Activity {
                 Intent add = new Intent(Aggiungi.this, FormActivity.class);
                 add.putExtra("",cod_b);
                 startActivity(add);
+                finish();
             }
         });
 

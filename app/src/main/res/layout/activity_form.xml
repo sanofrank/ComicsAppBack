@@ -139,6 +139,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text=""
+            android:onClick="showNumberPickerDialog"
+            android:focusable="false"
             />
 
         <TextView
@@ -159,23 +161,36 @@
             android:layout_height="match_parent"
             android:text="@string/invia"
             android:layout_marginTop="15dip"
-            android:layout_marginLeft="90dip"
-            android:layout_width="214dp" />
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            />
 
-        <Button
-            android:id="@+id/modifica"
-            android:layout_height="wrap_content"
-            android:text="@string/modifica"
-            android:layout_alignParentRight="true"
-            android:layout_width="130dp" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout2"
+        android:layout_gravity="bottom"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
 
         <Button
             android:id="@+id/elimina"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/elimina"
+            android:layout_marginLeft="19dp"
+            android:layout_toRightOf="@+id/invia"
             android:layout_width="130dp"
-            android:layout_gravity="bottom|right" />
+            android:layout_weight="1"
+            />
 
-
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/modifica"
+            android:layout_height="wrap_content"
+            android:text="@string/modifica"
+            android:layout_width="130dp"
+            android:layout_marginRight="16dp"
+            android:layout_gravity="right" />
+    </LinearLayout>
     </LinearLayout>
 </ScrollView>
