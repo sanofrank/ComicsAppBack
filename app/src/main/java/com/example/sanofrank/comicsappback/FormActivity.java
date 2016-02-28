@@ -21,6 +21,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,7 +35,9 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 
 
-public class FormActivity extends FragmentActivity {
+
+
+public class FormActivity extends AppCompatActivity {
 
 
 
@@ -67,7 +70,7 @@ public class FormActivity extends FragmentActivity {
     EditText inputCasa_ed;
     static EditText inputAnno;
     EditText inputGen;
-    EditText inputPrezzo;
+    static EditText inputPrezzo;
     static EditText inputQuantita;
     EditText inputDescr;
 
@@ -92,6 +95,8 @@ public class FormActivity extends FragmentActivity {
             inputAnno.setText( ""+ day + "-" + (month + 1) + "-" + year);
         }
     }
+
+    //NumberPickerFragment
 
     public static class NumberPickerFragment extends DialogFragment
             implements NumberPicker.OnValueChangeListener {
@@ -128,6 +133,56 @@ public class FormActivity extends FragmentActivity {
         public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
             inputQuantita.setText(String.valueOf(newVal));
         }
+    }
+
+    //Price picker
+
+    public static class PricePickerFragment extends DialogFragment {
+        public Dialog onCreateDialog(Bundle savedInstanceState){
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            // Get the layout inflater
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            // Inflate and set the layout for the dialog
+            // Pass null as the parent view because its going in the dialog layout
+            View view = inflater.inflate(R.layout.pricedialog, null);
+            builder.setView(view);
+            final NumberPicker np = (NumberPicker) view.findViewById(R.id.numberPicker1);
+            final NumberPicker np2 = (NumberPicker) view.findViewById(R.id.numberPicker2);
+            builder.setTitle("Prezzo:");
+            np.setMaxValue(500);
+            np.setMinValue(0);
+            np2.setMinValue(0);
+            np2.setMaxValue(99);
+            np.setFormatter(new NumberPicker.Formatter() {
+                @Override
+                public String format(int i) {
+                    return String.format("%02d", i);
+                }
+            });
+            np2.setFormatter(new NumberPicker.Formatter() {
+                @Override
+                public String format(int i) {
+                    return String.format("%02d", i);
+                }
+            });
+            np.setWrapSelectorWheel(false);
+            np2.setWrapSelectorWheel(true);
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    inputPrezzo.setText(String.valueOf(np.getValue())+","+String.valueOf(np2.getValue()));
+                }
+            });
+            builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    inputPrezzo.setText(String.valueOf(00)+","+String.valueOf(00));
+
+                }
+            });
+            return builder.create();
+        }
+
+
+
     }
 
 
@@ -390,6 +445,7 @@ public class FormActivity extends FragmentActivity {
             params.add(new BasicNameValuePair("quantita", quantita));
             params.add(new BasicNameValuePair("descrizione", descr));
 
+            Log.d("params ",params.toString());
             // getting JSON Object
             // Note that create product url accepts POST method
             JSONObject json = jsonParser.makeHttpRequest(url_check_product,
@@ -406,7 +462,7 @@ public class FormActivity extends FragmentActivity {
 
                 if (success == 0) {
 
-                    // successfully created product
+                    // No match
                     JSONObject json2 = jsonParser.makeHttpRequest(url_create_product,"POST",params);
                     // check log cat fro response
                     Log.d("Create Response", json2.toString());
@@ -768,6 +824,11 @@ public class FormActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void showPricePickerDialog(View v){
+        hideKeyboard(this);
+        DialogFragment newFragment = new PricePickerFragment();
+        newFragment.show(getSupportFragmentManager(),"pricepicker");
+    }
 
     public void showNumberPickerDialog(View v){
 
@@ -781,6 +842,8 @@ public class FormActivity extends FragmentActivity {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(),"datepicker");
     }
+
+
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);

@@ -1,6 +1,7 @@
 <resources>
     <!--Main-->
     <string name="app_name">ComicsAppBack</string>
+    <string name="title_activity_main">Home</string>
     <string name="action_settings">Settings</string>
     <string name="aggiungi">Aggiungi Prodotto</string>
     <string name="visualizza">Visualizza DataBase</string>
